@@ -4,7 +4,7 @@ import io from 'socket.io-client'
 const socketURL = 'localhost:5000'
 function Layout(props: any) {
     const { title } = props;
-    const [socket, setSocket] = useState(null)
+    const [socket, setSocket] = useState()
 
     const initSocket = () => {
         const socket = io(socketURL);
