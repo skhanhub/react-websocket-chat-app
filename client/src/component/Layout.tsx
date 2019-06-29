@@ -3,21 +3,23 @@ import io from 'socket.io-client'
 import constants from '../constants'
 import LoginForm from './LoginForm'
 import ChatContainer from './ChatContainer'
+import { User } from './ChatContainer';
+
 const socketURL = 'localhost:5000'
 
 function Layout(props: any) {
-    const { title } = props;
+    // const { title } = props;
     const [socket, setSocket] = useState()
-    const [user, setUserState] = useState('')
+    const [user, setUserState] = useState<null|User>(null)
 
-    const setUser = (user: string)=>{
+    const setUser = (user: User)=>{
         socket.emit(constants.USER_CONNECTED, user);
         setUserState(user);
     }
 
     const logout = () => {
         socket.emit(constants.LOGOUT);
-        setUserState('');
+        setUserState(null);
     }
 
     useEffect(()=>{
@@ -30,12 +32,12 @@ function Layout(props: any) {
         }
         initSocket();
     }, []);
-
+    
     return (
         <div className="container">
             
             {
-            user === ''?
+            !user ?
             <LoginForm 
                 socket={socket} 
                 setUser={setUser}

@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import constants from '../constants'
 
 
 function LoginForm(props: any) {
     const {socket} = props;
     const [nickname, setNickname] = useState('')
-    const [error, setError] = useState('')
+    const [error, setError] = useState<null | string>(null)
 
-    const inputEl: React.RefObject<HTMLInputElement> = React.createRef();
+    const inputEl: React.RefObject<HTMLInputElement> = useRef(null);
 
      
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -18,8 +18,8 @@ function LoginForm(props: any) {
                 setError("Username taken!");         
             }
             else{
-                props.setUser(data.user);
-                setError(""); 
+                setError(null); 
+                props.setUser(data.user);              
             }
         });
     }
@@ -29,7 +29,7 @@ function LoginForm(props: any) {
     }
 
     return (
-        <div className="container">
+        <div className="login">
             <form onSubmit={handleSubmit} className="login-form">
                 <label htmlFor="nickname">
                     <h2>Got a nickname?</h2>
@@ -42,7 +42,7 @@ function LoginForm(props: any) {
                     onChange={handleChange}
                     placeholder="Cool Username"
                 />
-                <div className="error">{error != '' && error}</div>
+                <div className="error">{error && error}</div>
             </form>
         </div>
     );

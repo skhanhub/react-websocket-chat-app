@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react';
-// import FAChevronDown from 'react-icons/lib/md/keyboard-arrow-down'
-// import FAMenu from 'react-icons/fa/list-ul'
-// import FASearch from 'react-icons/lib/fa/search'
-// import MdEject from 'react-icons/lib/md/eject'
-
+import React, { useRef } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
 import { IoMdMenu, IoIosSearch } from "react-icons/io";
 import { MdEject } from "react-icons/md";
+import { Chat, User } from './ChatContainer';
+
+
 
 function Sidebar(props: any) {
     const {chats, activeChat, user, setActiveChat, logout} = props;
-
+    const usersEl: React.RefObject<HTMLDivElement> = useRef(null);
     return (
         <div id="side-bar">
             <div className="heading">
@@ -26,31 +24,35 @@ function Sidebar(props: any) {
             </div>
             <div 
                 className="users" 
-                ref='users' 
-                onClick={(e)=>{ (e.target === props.refs.user) && setActiveChat('') }}>
+                ref={usersEl} 
+                onClick={(e)=>{
+                    console.log('target', {target: e.target, userEl: usersEl.current})
+                    return (e.target === usersEl.current) && setActiveChat(null) 
+                }}
+            >
                 
                 {
-                chats.map((chat: any)=>{
+                chats.map((chat: Chat)=>{
                     if(chat.name){
                         const lastMessage = chat.messages[chat.messages.length - 1];
-                        const user = chat.users.find((name: string)=>{
-                            return name !== this.props.name
+                        const user = chat.users.find((user: User)=>{
+                            return user.name !== props.user.name
                         }) || { name:"Community" }
-                        const classNames = (activeChat!=='' && activeChat.id === chat.id) ? 'active' : ''
+                        const classNames = (activeChat && activeChat.id === chat.id) ? 'active' : ''
                         return(
-                        <div 
-                            key={chat.id} 
-                            className={`user ${classNames}`}
-                            onClick={ ()=>{ setActiveChat(chat) } }
+                            <div 
+                                key={chat.id} 
+                                className={`user ${classNames}`}
+                                onClick={ ()=>{ setActiveChat(chat) } }
                             >
                             <div className="user-photo">{user.name[0].toUpperCase()}</div>
                             <div className="user-info">
                                 <div className="name">{user.name}</div>
                                 {lastMessage && <div className="last-message">{lastMessage.message}</div>}
                             </div>
-                            
-                        </div>
-                    )
+                                
+                            </div>
+                        )
                     }
 
                     return null
@@ -59,7 +61,7 @@ function Sidebar(props: any) {
                 
             </div>
             <div className="current-user">
-                <span>{user.name}</span>
+                <span>{user && user.name}</span>
                 <div onClick={()=>{logout()}} title="Logout" className="logout">
                     <MdEject/>	
                 </div>
