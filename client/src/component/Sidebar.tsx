@@ -7,7 +7,7 @@ import { Chat, User } from './ChatContainer';
 
 
 function Sidebar(props: any) {
-    const {chats, activeChat, user, setActiveChat, logout} = props;
+    // const {chats, activeChat, user, setActiveChat, logout} = props;
     const usersEl: React.RefObject<HTMLDivElement> = useRef(null);
     return (
         <div id="side-bar">
@@ -27,23 +27,23 @@ function Sidebar(props: any) {
                 ref={usersEl} 
                 onClick={(e)=>{
                     console.log('target', {target: e.target, userEl: usersEl.current})
-                    return (e.target === usersEl.current) && setActiveChat(null) 
+                    return (e.target === usersEl.current) && props.setActiveChat(null) 
                 }}
             >
                 
                 {
-                chats.map((chat: Chat)=>{
+                props.chats.map((chat: Chat)=>{
                     if(chat.name){
                         const lastMessage = chat.messages[chat.messages.length - 1];
                         const user = chat.users.find((user: User)=>{
                             return user.name !== props.user.name
                         }) || { name:"Community" }
-                        const classNames = (activeChat && activeChat.id === chat.id) ? 'active' : ''
+                        const classNames = (props.activeChat && props.activeChat.id === chat.id) ? 'active' : ''
                         return(
                             <div 
                                 key={chat.id} 
                                 className={`user ${classNames}`}
-                                onClick={ ()=>{ setActiveChat(chat) } }
+                                onClick={ ()=>{ props.setActiveChat(chat) } }
                             >
                             <div className="user-photo">{user.name[0].toUpperCase()}</div>
                             <div className="user-info">
@@ -61,8 +61,8 @@ function Sidebar(props: any) {
                 
             </div>
             <div className="current-user">
-                <span>{user && user.name}</span>
-                <div onClick={()=>{logout()}} title="Logout" className="logout">
+                <span>{props.user && props.user.name}</span>
+                <div onClick={()=>{props.logout()}} title="Logout" className="logout">
                     <MdEject/>	
                 </div>
             </div>

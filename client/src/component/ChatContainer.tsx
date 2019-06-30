@@ -38,40 +38,39 @@ function ChatContainer(props: any) {
 
     const resetChat = (chat: Chat)=>{
         console.log("resetChat")
-		return addChat(chat, true)
+		return addChat(chat, false)
     }
 
     const addChat = (chat: Chat, reset: boolean)=>{
-        console.log("addChat")
-        const newChats = reset ? [chat] : [...chats, chat]
-        setChats(newChats);
-        const temp = reset ? chat : activeChat;
-        setActiveChatState(temp);
+        console.log("addChat", {chat})
+        setChats(reset ? [chat] : [...chats, chat]);
+        setActiveChatState(reset ? chat : activeChat);
         
         const typingEvent = `${constants.TYPING}-${chat.id}`
 		const messageEvent = `${constants.MESSAGE_RECIEVED}-${chat.id}`
-        
+        console.log('addChat', {activeChat, chats})
 		socket.on(typingEvent, updateTypingInChat(chat.id))
 		socket.on(messageEvent, addMessageToChat(chat.id))
     }
 
     const addMessageToChat = (chatId: string)=>{
+        console.log('before addMessageToChat', {activeChat, chats})
 		return (message: Message) => {
-
             console.log('addMessageToChat', {activeChat, chats})
 			let newChats =  chats.map((chat: Chat)=>{
 				if(chat.id === chatId){
                     chat.messages.push(message)
                 }
 				return chat
-			})
+            })
+            console.log('addMessageToChat', {newChats})
 			setChats(newChats)
 		}
     }
     
     const updateTypingInChat = (chatId: string) =>{
 		return (data: any)=>{
-
+            console.log({data})
             console.log('updateTypingInChat', {activeChat, chats})
 			if(data.user !== props.user.name){
                 console.log('updateTypingInChat2', {activeChat, chats})
